@@ -17,12 +17,12 @@ namespace Adressbook_web_tests
         [Test]
         public void GroupRemovalTest()
         {
-            GoToHomePage();
-            Login(new AccountData ("admin", "secret"));
-            GoToTheGroupPage();
-            SelectGroup(1);
-            DeleteGroup();
-            Return();
+            app.Navigator.GoToHomePage();
+            app.Auth.Login(new AccountData("admin", "secret"));
+            app.Navigator.GoToTheGroupPage();
+            app.Groups.SelectGroup(1);
+            app.Groups.DeleteGroup();
+            app.Groups.Return();
         }
 
 
@@ -30,7 +30,7 @@ namespace Adressbook_web_tests
 
 
 
- 
+
     }
 }
 

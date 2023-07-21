@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -17,12 +18,12 @@ namespace Adressbook_web_tests
         [Test]
         public void TheContactsCreationTest()
         {
-            GoToHomePage();
-            Login(new AccountData ("admin", "secret"));
-            PageContacts();
-            FillContactsForm(new ContactData ("lev", "Myasnikov"));
-            SubmitContactCreation();
-            Logout();
+            app.Navigator.GoToHomePage();
+            app.Auth.Login(new AccountData("admin", "secret"));
+            app.Contact.PageContacts();
+            app.Contact.FillContactsForm(new ContactData("lev", "Myasnikov"));
+            app.Contact.SubmitContactCreation();
+            app.Contact.Logout();
         }
 
     }
