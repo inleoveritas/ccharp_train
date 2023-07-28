@@ -47,7 +47,7 @@ namespace Adressbook_web_tests
         }
         public ContactHelper SelectContact(int index)
         {
-            driver.FindElements(By.XPath("//tr[@name='entry']"))[index].FindElement(By.XPath("//input[@type='checkbox']")).Click();
+            driver.FindElements(By.XPath("//tr[@name='entry']"))[index-1].FindElement(By.XPath("//input[@type='checkbox']")).Click();
             return this;
         }
         public ContactHelper DeleteContact()
