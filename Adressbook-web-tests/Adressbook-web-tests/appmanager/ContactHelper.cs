@@ -43,12 +43,23 @@ namespace Adressbook_web_tests
             PageContacts()
             .FillContactsForm(contact)
             .SubmitContactCreation();
+            manager.Navigator.GoToHomePage();
             return this;
         }
         public ContactHelper SelectContact(int index)
         {
             driver.FindElements(By.XPath("//tr[@name='entry']"))[index-1].FindElement(By.XPath("//input[@type='checkbox']")).Click();
             return this;
+        }
+
+        public bool ContactExists(int index)
+        {
+            var allContacts = driver.FindElements(By.XPath("//tr[@name='entry']"));
+            if (allContacts.Count > index) 
+            {
+                return true;
+            }
+            return false;
         }
         public ContactHelper DeleteContact()
         {
@@ -63,6 +74,10 @@ namespace Adressbook_web_tests
 
         public ContactHelper RemoveContact(int index)
         {
+            if (!ContactExists(index))
+            {
+                CreateContact(new ContactData("Lev", "Myasnikov"));
+            }
             SelectContact(index)
             .DeleteContact()
             .AcceptAlert();
@@ -95,6 +110,10 @@ namespace Adressbook_web_tests
 
         public ContactHelper ModifyContact(int index, ContactData contact)
         {
+            if (!ContactExists(index))
+            {
+                CreateContact(new ContactData("Lev", "Myasnikov"));
+            }
             SelectContact(index)
             .InitContactModification()
             .FillContactForm(contact)

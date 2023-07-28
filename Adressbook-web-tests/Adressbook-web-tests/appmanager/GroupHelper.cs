@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,10 @@ namespace Adressbook_web_tests
         public GroupHelper Modify(int p, GroupData newData)
         {
             manager.Navigator.GoToTheGroupPage();
+            if (!GroupExists(p))
+            {
+                CreateGroup(new GroupData("lev", "Group", "Test"));
+            }
             SelectGroup(p);
             InitGroupModification();
             FillGroupForm(newData);
@@ -43,6 +48,10 @@ namespace Adressbook_web_tests
         public GroupHelper Remove(int p)
         {
             manager.Navigator.GoToTheGroupPage();
+            if (!GroupExists(p))
+            {
+                CreateGroup(new GroupData("lev", "Group", "Test"));
+            }
             SelectGroup(p);
             DeleteGroup();
             Return();
@@ -80,6 +89,17 @@ namespace Adressbook_web_tests
         {
             driver.FindElement(By.XPath("//div[@id='content']/form/span[" + index + "]/input")).Click();
             return this;
+        }
+
+        public bool GroupExists(int index)
+        {
+            var allGroups = driver.FindElements(By.XPath("//div[@id='content']/form/span/input"));
+
+            if (allGroups.Count > index)
+            {
+                return true;
+            }
+            return false;
         }
         public GroupHelper DeleteGroup()
         {
