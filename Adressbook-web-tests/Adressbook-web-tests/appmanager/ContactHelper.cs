@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Adressbook_web_tests
@@ -128,6 +129,19 @@ namespace Adressbook_web_tests
             return this;
         }
 
- 
+        public List<ContactData> GetContactList()
+        {
+            List<ContactData> contacts = new List<ContactData>();
+
+            manager.Navigator.GoToHomePage();
+            ICollection<IWebElement> entries = driver.FindElements(By.XPath("//tr[@name='entry']"));
+            foreach (IWebElement entry in entries)
+            {
+                string lastName = entry.FindElements(By.XPath(".//td"))[1].Text;
+                string firstName = entry.FindElements(By.XPath(".//td"))[2].Text;
+                contacts.Add(new ContactData(firstName, lastName)); 
+            }
+            return contacts;
+        }
     }
 }
