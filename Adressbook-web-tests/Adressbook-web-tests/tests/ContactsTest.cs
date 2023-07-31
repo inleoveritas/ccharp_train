@@ -18,23 +18,47 @@ namespace Adressbook_web_tests
         [Test]
         public void ContactsCreationTest()
         {
+            ContactData contact = new ContactData("тестовый", "контакт");
 
-            app.Contact.CreateContact(new ContactData("lev", "Myasnikov")).Logout();
+            List<ContactData> oldContacts = app.Contact.GetContactList();
+
+            app.Contact.CreateContact(contact);
+
+            oldContacts.Add(contact);
+
+            List<ContactData> newContacts = app.Contact.GetContactList();
+            Assert.AreEqual(oldContacts, newContacts);
+
         }
 
         [Test]
         public void ContactsRemovalTest()
         {
+            List<ContactData> oldContacts = app.Contact.GetContactList();
 
             app.Contact.RemoveContact(1);
+
+            oldContacts.RemoveAt(0);
+
+            List<ContactData> newContacts = app.Contact.GetContactList();
+            Assert.AreEqual(oldContacts, newContacts);
         }
 
         [Test]
         public void ContactsModificationTest()
         {
+            List<ContactData> oldContacts = app.Contact.GetContactList();
 
             ContactData newData = new ContactData("Max", "Korolkov");
+            
             app.Contact.ModifyContact(1, newData);
+
+            oldContacts[0] = newData;
+
+            List<ContactData> newContacts = app.Contact.GetContactList();
+            Assert.AreEqual(oldContacts, newContacts);
+
+
         }
     }
 }

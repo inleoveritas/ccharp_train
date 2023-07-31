@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Adressbook_web_tests
 {
-    public class ContactData
+    public class ContactData : IEquatable<ContactData>
     {
         private string firstname;  
         private string lastname;
+
+
 
         public ContactData(string firstname, string lastname)
         {
@@ -39,6 +42,20 @@ namespace Adressbook_web_tests
             {
                 lastname = value;
             }
+        }
+
+        public bool Equals(ContactData other)
+        { 
+            if (Object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            return firstname == other.firstname && lastname == other.lastname;
+
         }
     }
 }
