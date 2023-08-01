@@ -15,6 +15,8 @@ namespace Adressbook_web_tests
         {
         }
 
+        private List<ContactData> contactCache = null;
+
         public ContactHelper PageContacts()
         {
             //Go to the page contacts
@@ -36,10 +38,11 @@ namespace Adressbook_web_tests
         {
             //Submit contact creation
             driver.FindElement(By.XPath("//div[@id='content']/form/input[21]")).Click();
+            contactCache = null;
             return this;
         }
 
-        public ContactHelper CreateContact(ContactData contact) 
+        public ContactHelper CreateContact(ContactData contact)
         {
             PageContacts()
             .FillContactsForm(contact)
@@ -49,14 +52,14 @@ namespace Adressbook_web_tests
         }
         public ContactHelper SelectContact(int index)
         {
-            driver.FindElements(By.XPath("//tr[@name='entry']"))[index-1].FindElement(By.XPath("//input[@type='checkbox']")).Click();
+            driver.FindElements(By.XPath("//tr[@name='entry']"))[index - 1].FindElement(By.XPath("//input[@type='checkbox']")).Click();
             return this;
         }
 
         public bool ContactExists(int index)
         {
             var allContacts = driver.FindElements(By.XPath("//tr[@name='entry']"));
-            if (allContacts.Count > index) 
+            if (allContacts.Count > index)
             {
                 return true;
             }
@@ -65,6 +68,7 @@ namespace Adressbook_web_tests
         public ContactHelper DeleteContact()
         {
             driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
+            contactCache = null;
             return this;
         }
         public ContactHelper AcceptAlert()
@@ -105,6 +109,7 @@ namespace Adressbook_web_tests
         public ContactHelper SubmitContactModification()
         {
             driver.FindElement(By.Name("update")).Click();
+            contactCache = null;
             return this;
         }
 
@@ -131,17 +136,22 @@ namespace Adressbook_web_tests
 
         public List<ContactData> GetContactList()
         {
-            List<ContactData> contacts = new List<ContactData>();
-
-            manager.Navigator.GoToHomePage();
-            ICollection<IWebElement> entries = driver.FindElements(By.XPath("//tr[@name='entry']"));
-            foreach (IWebElement entry in entries)
+            if (contactCache is null)
             {
-                string lastName = entry.FindElements(By.XPath(".//td"))[1].Text;
-                string firstName = entry.FindElements(By.XPath(".//td"))[2].Text;
-                contacts.Add(new ContactData(firstName, lastName)); 
+                contactCache = new List<ContactData>();
+
+                manager.Navigator.GoToHomePage();
+                ICollection<IWebElement> entries = driver.FindElements(By.XPath("//tr[@name='entry']"));
+                foreach (IWebElement entry in entries)
+
+                {
+                    string lastName = entry.FindElements(By.XPath(".//td"))[1].Text;
+                    string firstName = entry.FindElements(By.XPath(".//td"))[2].Text;
+                    contactCache.Add(new ContactData(firstName, lastName));
+                }
+
             }
-            return contacts;
+            return new List<ContactData>(contactCache);
         }
     }
 }
