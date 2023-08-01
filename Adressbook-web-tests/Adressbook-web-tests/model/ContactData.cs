@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Adressbook_web_tests
 {
-    public class ContactData : IEquatable<ContactData>
+    public class ContactData : IEquatable<ContactData>, IComparable<ContactData>
     {
         private string firstname;  
         private string lastname;
@@ -56,6 +56,21 @@ namespace Adressbook_web_tests
             }
             return firstname == other.firstname && lastname == other.lastname;
 
+        }
+
+        public override string ToString()
+        {
+            return "firstname=" + Firstname;
+
+        }
+
+        public int CompareTo(ContactData other)
+        {
+            if (Object.ReferenceEquals(other, null))
+            {
+                return 1;
+            }
+            return Firstname.CompareTo(other.Firstname);
         }
     }
 }

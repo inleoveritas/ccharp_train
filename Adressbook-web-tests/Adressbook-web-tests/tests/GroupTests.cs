@@ -17,14 +17,17 @@ namespace Adressbook_web_tests
             group.Header = "test";
             group.Footer = "group";
 
-            List<GroupData> oldgroups = app.Groups.GetGroupList();
+            List<GroupData> oldGroups = app.Groups.GetGroupList();
 
             app.Groups.CreateGroup(group);
 
-            oldgroups.Add(group);
+
 
             List<GroupData> newGroups = app.Groups.GetGroupList();
-            Assert.AreEqual(oldgroups, newGroups);
+            oldGroups.Add(group);
+            oldGroups.Sort();
+            newGroups.Sort();
+            Assert.AreEqual(oldGroups, newGroups);
 
         }
 
@@ -39,9 +42,11 @@ namespace Adressbook_web_tests
 
             app.Groups.CreateGroup(group);
 
-            oldGroups.Insert(0, group);
 
             List<GroupData> newGroups = app.Groups.GetGroupList();
+            oldGroups.Add(group);
+            oldGroups.Sort();
+            newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);
         }
 
@@ -55,6 +60,8 @@ namespace Adressbook_web_tests
             List<GroupData> newGroups = app.Groups.GetGroupList();
 
             oldGroups.RemoveAt(0);
+            oldGroups.Sort();
+            newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);
 
         }
@@ -75,6 +82,9 @@ namespace Adressbook_web_tests
 
 
             List<GroupData> newGroups = app.Groups.GetGroupList();
+            oldGroups[0].Name = newData.Name;
+            oldGroups.Sort();
+            newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);
         }
     }
