@@ -95,6 +95,12 @@ namespace Adressbook_web_tests
             return this;
         }
 
+        public ContactHelper InitContactDetails()
+        {
+            driver.FindElement(By.XPath("//img[@alt='Details']")).Click();
+            return this;
+        }
+
         public ContactHelper FillContactForm(ContactData contact)
         {
             driver.FindElement(By.Name("firstname")).Click();
@@ -203,6 +209,12 @@ namespace Adressbook_web_tests
             };
         }
 
-    }
+        public string GetContactInformationFromDetails(int index)
+        {
+            manager.Navigator.GoToHomePage();
+            InitContactDetails();
 
+            return driver.FindElement(By.Id("content")).GetAttribute("innerText").TrimEnd('\r', '\n').Replace("\r", "");
+        }
+    }
 }

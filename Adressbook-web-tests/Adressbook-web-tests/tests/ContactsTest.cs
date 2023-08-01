@@ -79,5 +79,15 @@ namespace Adressbook_web_tests
             Assert.AreEqual(fromTable.AllPhones, fromForm.AllPhones);
             Assert.AreEqual(fromTable.AllEmails, fromForm.AllEmails);
         }
+
+        [Test]
+        public void ContactDetailsTest()
+        {
+            string fromForm = app.Contact.GetContactInformationFromEditorForm(0).ToString();
+            string fromView = app.Contact.GetContactInformationFromDetails(0);
+            
+            Assert.AreEqual(fromForm, fromView);    
+        }
     }
 }
+ 

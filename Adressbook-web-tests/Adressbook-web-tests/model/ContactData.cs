@@ -92,8 +92,17 @@ namespace Adressbook_web_tests
 
         public override string ToString()
         {
-            return "firstname=" + Firstname;
+            string text = "";
+            text = $"{Firstname} {Lastname}"
+                + "\n" + $"{Address}" + "\n"
+                + "\n" + $"H: {HomePhone}"
+                + "\n" + $"M: {MobilePhone}"
+                + "\n" + $"W: {WorkPhone}" + "\n"
+                + "\n" + $"{FirstEmail}"
+                + "\n" + $"{SecondEmail}"
+                + "\n" + $"{ThirdEmail}";
 
+            return text;
         }
 
         public int CompareTo(ContactData other)
