@@ -27,6 +27,8 @@ namespace Adressbook_web_tests
             oldContacts.Add(contact);
 
             List<ContactData> newContacts = app.Contact.GetContactList();
+            oldContacts.Sort();
+            newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
 
         }
@@ -41,6 +43,8 @@ namespace Adressbook_web_tests
             oldContacts.RemoveAt(0);
 
             List<ContactData> newContacts = app.Contact.GetContactList();
+            oldContacts.Sort();
+            newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
         }
 
@@ -56,6 +60,8 @@ namespace Adressbook_web_tests
             oldContacts[0] = newData;
 
             List<ContactData> newContacts = app.Contact.GetContactList();
+            oldContacts.Sort();
+            newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
 
 
