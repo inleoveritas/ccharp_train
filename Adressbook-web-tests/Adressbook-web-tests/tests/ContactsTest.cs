@@ -66,5 +66,18 @@ namespace Adressbook_web_tests
 
 
         }
+
+        [Test]  
+
+        public void ContactInformationTest()
+        {
+            ContactData fromTable = app.Contact.GetContactInformationFromTable(0);
+            ContactData fromForm = app.Contact.GetContactInformationFromEditorForm(0);
+
+            Assert.AreEqual (fromTable, fromForm);
+            Assert.AreEqual(fromTable.Address, fromForm.Address);
+            Assert.AreEqual(fromTable.AllPhones, fromForm.AllPhones);
+            Assert.AreEqual(fromTable.AllEmails, fromForm.AllEmails);
+        }
     }
 }
