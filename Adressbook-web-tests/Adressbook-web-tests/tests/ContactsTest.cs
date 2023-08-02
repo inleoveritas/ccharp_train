@@ -13,13 +13,29 @@ namespace Adressbook_web_tests
     [TestFixture]
     public class ContactsTests : TestBase
     {
-
-
-        [Test]
-        public void ContactsCreationTest()
+        public static IEnumerable<ContactData> RandomContactdataProvider()
         {
-            ContactData contact = new ContactData("тестовый", "контакт");
+            List<ContactData> contacts = new List<ContactData>();
+            for (int i = 0; i < 5; i++)
+            {
+                contacts.Add(new ContactData(GenerateRandomString(30), GenerateRandomString(30))
+                {
+                    Address = GenerateRandomString(90),
+                    HomePhone = GenerateRandomString(90),
+                    MobilePhone = GenerateRandomString(90),
+                    WorkPhone = GenerateRandomString(90),
+                    FirstEmail = GenerateRandomString(90),
+                    SecondEmail = GenerateRandomString(90),
+                    ThirdEmail = GenerateRandomString(90)
+                });
+            }
+            return contacts;
+        }
 
+        [Test, TestCaseSource("RandomContactdataProvider")]
+        public void ContactsCreationTest(ContactData contact)
+        {
+            
             List<ContactData> oldContacts = app.Contact.GetContactList();
 
             app.Contact.CreateContact(contact);
@@ -38,7 +54,7 @@ namespace Adressbook_web_tests
         {
             List<ContactData> oldContacts = app.Contact.GetContactList();
 
-            app.Contact.RemoveContact(1);
+            app.Contact.RemoveContact(0);
 
             oldContacts.RemoveAt(0);
 

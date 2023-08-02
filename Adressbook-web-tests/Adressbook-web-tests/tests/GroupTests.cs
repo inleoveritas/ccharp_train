@@ -1,7 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using System.Collections;
+using System.Security.Cryptography;
 using System.Text;
 using Adressbook_web_tests;
 using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V111.Storage;
 using OpenQA.Selenium.Firefox;
 
 namespace Adressbook_web_tests
@@ -9,38 +11,31 @@ namespace Adressbook_web_tests
     [TestFixture]
     public class GroupTests : TestBase
     {
-
-        [Test]
-        public void GroupCreationTest()
+        public static IEnumerable<GroupData> RandomGroupdataProvider()
         {
-            GroupData group = new GroupData("lev");
-            group.Header = "test";
-            group.Footer = "group";
-
-            List<GroupData> oldGroups = app.Groups.GetGroupList();
-
-            app.Groups.CreateGroup(group);
-
-
-
-            List<GroupData> newGroups = app.Groups.GetGroupList();
-            oldGroups.Add(group);
-            oldGroups.Sort();
-            newGroups.Sort();
-            Assert.AreEqual(oldGroups, newGroups);
-
+            List<GroupData> groups = new List<GroupData>();
+            for (int i = 0; i < 5; i++)
+            {
+                groups.Add(new GroupData(GenerateRandomString(30))
+                {
+                    Header = GenerateRandomString(100),
+                    Footer = GenerateRandomString(100)
+                });
+            }
+            return groups;
         }
 
-        [Test]
-        public void EmptyGroupCreationTest()
+
+
+        [Test, TestCaseSource("RandomGroupdataProvider")]
+        public void GroupCreationTest(GroupData group)
         {
-            GroupData group = new GroupData("");
-            group.Header = "";
-            group.Footer = "";
+
 
             List<GroupData> oldGroups = app.Groups.GetGroupList();
 
             app.Groups.CreateGroup(group);
+
 
 
             List<GroupData> newGroups = app.Groups.GetGroupList();
@@ -48,6 +43,7 @@ namespace Adressbook_web_tests
             oldGroups.Sort();
             newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);
+
         }
 
         [Test]
