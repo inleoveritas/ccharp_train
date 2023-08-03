@@ -90,18 +90,66 @@ namespace Adressbook_web_tests
             return Firstname == other.Firstname && Lastname == other.Lastname;
 
         }
+        private bool hasPhone()
+        {
+            return !(String.IsNullOrWhiteSpace(HomePhone) && String.IsNullOrWhiteSpace(MobilePhone) && String.IsNullOrWhiteSpace(WorkPhone));
+        }
+        private bool hasEmail()
+        {
+            return !(String.IsNullOrWhiteSpace(FirstEmail) && String.IsNullOrWhiteSpace(SecondEmail) && String.IsNullOrWhiteSpace(ThirdEmail));
+        }
 
         public override string ToString()
         {
             string text = "";
-            text = $"{Firstname} {Lastname}"
-                + "\n" + $"{Address}" + "\n"
+            /*text = $"{Firstname} {Lastname}"
+                + "\n" + $"{Address}"
                 + "\n" + $"H: {HomePhone}"
                 + "\n" + $"M: {MobilePhone}"
                 + "\n" + $"W: {WorkPhone}" + "\n"
                 + "\n" + $"{FirstEmail}"
                 + "\n" + $"{SecondEmail}"
                 + "\n" + $"{ThirdEmail}";
+            */
+            text = $"{Firstname} {Lastname}";
+            if (!String.IsNullOrWhiteSpace(Address))
+            {
+                text += "\n" + $"{Address}";
+            }
+            if (hasPhone())
+            {
+                text += "\n";
+
+                if (!String.IsNullOrWhiteSpace(HomePhone))
+                {
+                    text += "\n" + $"H: {HomePhone}";
+                }
+                if (!String.IsNullOrWhiteSpace(MobilePhone))
+                {
+                    text += "\n" + $"M: {MobilePhone}";
+                }
+                if (!String.IsNullOrWhiteSpace(WorkPhone))
+                {
+                    text += "\n" + $"W: {WorkPhone}";
+                }
+            }
+            if (hasEmail())
+            {
+                text += "\n";
+
+                if (!String.IsNullOrWhiteSpace(FirstEmail))
+                {
+                    text += "\n" + $"{FirstEmail}";
+                }
+                if (!String.IsNullOrWhiteSpace(SecondEmail))
+                {
+                    text += "\n" + $"{SecondEmail}";
+                }
+                if (!String.IsNullOrWhiteSpace(ThirdEmail))
+                {
+                    text += "\n" + $"{ThirdEmail}";
+                }
+            }
 
             return text;
         }
