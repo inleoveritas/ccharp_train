@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Serialization;
 using Adressbook_web_tests;
 using OpenQA.Selenium;
 using OpenQA.Selenium.DevTools.V111.Storage;
@@ -25,7 +26,7 @@ namespace Adressbook_web_tests
             return groups;
         }
 
-        public static IEnumerable<GroupData> GroupDataFromFile() 
+        public static IEnumerable<GroupData> GroupDataFromCsvFile() 
         {
             List<GroupData> groups = new List<GroupData>();
             string[] lines = File.ReadAllLines(@"groups.csv");
@@ -41,7 +42,15 @@ namespace Adressbook_web_tests
             return groups;
         }
 
-        [Test, TestCaseSource("GroupDataFromFile")]
+        public static IEnumerable<GroupData> GroupDataFromXmlFile()
+        {
+            return (List<GroupData>) 
+                new XmlSerializer(typeof(List<GroupData>))
+                .Deserialize(new StreamReader(@"groups.xml"));   
+
+        }
+
+        [Test, TestCaseSource("GroupDataFromCsvFile")]
         public void GroupCreationTest(GroupData group)
         {
 
