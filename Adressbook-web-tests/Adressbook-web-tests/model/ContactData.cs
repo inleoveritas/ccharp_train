@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -111,7 +112,17 @@ namespace Adressbook_web_tests
             {
                 return 1;
             }
-            return Firstname.CompareTo(other.Firstname);
+            if (Object.ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+            int res = Lastname.CompareTo(other.Lastname);
+
+            if (res == 0)
+            {
+                res = Firstname.CompareTo(other.Firstname); 
+            }
+            return res;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ namespace Adressbook_web_tests
 
             ContactData newData = new ContactData("Max", "Korolkov");
             
-            app.Contact.ModifyContact(1, newData);
+            app.Contact.ModifyContact(0, newData);
 
             oldContacts[0] = newData;
 
