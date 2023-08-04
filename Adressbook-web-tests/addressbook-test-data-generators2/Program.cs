@@ -11,16 +11,52 @@ using System.Xml.Serialization;
 using Adressbook_web_tests;
 
 
+
 namespace addressbook_test_data_generators
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            int count = Convert.ToInt32(args[0]);
-            StreamWriter writer = new StreamWriter(args[1]);
-            string format = args[2];
+            string type = args[0];
+            int count = Convert.ToInt32(args[1]);
+            StreamWriter writer = new StreamWriter(args[2]);
+            string format = args[3];
 
+            var data = new object();
+
+            switch (type)
+            {
+                case "contacts":
+                    data = generateContacts(count);
+                    break;
+                case "groups":
+                    data = generateGroups(count);
+                    break;
+                default:
+                    Console.Out.Write("Unrecognized type: " + type);
+                    writer.Close();
+                    return -1;
+            }
+
+            switch (format)
+            {
+                case "xml":
+                    writeDataToXMLFile(writer, data);
+
+                    break;
+                default:
+                    Console.Out.Write("Unrecognized format: " + format);
+                    writer.Close();
+                    return -1;
+            }
+
+            writer.Close();
+            return 0;
+        }
+
+        static List<GroupData> generateGroups(int count)
+        {
             List<GroupData> groups = new List<GroupData>();
             for (int i = 0; i < count; i++)
             {
@@ -30,37 +66,39 @@ namespace addressbook_test_data_generators
                     Footer = TestBase.GenerateRandomString(100)
                 });
             }
-            if (format == "csv")
-            {
-                writeGroupsToCsvFile(groups, writer);
-
-            }
-            if (format == "xml")
-            {
-                writeGroupsToXMLFile(groups, writer);
-            }
-            else
-            {
-                Console.Out.Write("Unrecognized format" + format);
-            }
-            writer.Close();
+            return groups;
         }
 
-        static void writeGroupsToCsvFile(List<GroupData> groups, StreamWriter writer)
+        static List<ContactData> generateContacts(int count)
         {
-            foreach (GroupData group in groups)
+            List<ContactData> contacts = new List<ContactData>();
+            for (int i = 0; i < count; i++)
             {
-                writer.WriteLine(String.Format("${0},${1},${2}",
-                    group.Name, group.Header, group.Footer));
+                contacts.Add(new ContactData(TestBase.GenerateRandomString(30), TestBase.GenerateRandomString(30))
+                {
+                    Address = TestBase.GenerateRandomString(90),
+                    HomePhone = TestBase.GenerateRandomString(90),
+                    MobilePhone = TestBase.GenerateRandomString(90),
+                    WorkPhone = TestBase.GenerateRandomString(90),
+                    FirstEmail = TestBase.GenerateRandomString(90),
+                    SecondEmail = TestBase.GenerateRandomString(90),
+                    ThirdEmail = TestBase.GenerateRandomString(90)
+                });
             }
+            return contacts;
         }
 
-        static void writeGroupsToXMLFile(List<GroupData> groups, StreamWriter writer)
+        static void writeDataToXMLFile(StreamWriter writer, object data)
         {
-            foreach (GroupData group in groups)
-            {
-                new XmlSerializer(typeof(List<GroupData>)).Serialize(writer, groups);
-            }
+            if (data == null)
+                throw new ArgumentNullException("data");
+
+            var type = data.GetType();
+
+            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(List<>))
+                throw new ArgumentException("Type must be List<>, but was " + type.FullName, "data");
+
+            new XmlSerializer(type).Serialize(writer, data);
         }
     }
 }
