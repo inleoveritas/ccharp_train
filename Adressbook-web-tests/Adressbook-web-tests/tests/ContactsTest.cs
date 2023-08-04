@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml.Serialization;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -33,7 +34,15 @@ namespace Adressbook_web_tests
             return contacts;
         }
 
-        [Test, TestCaseSource("RandomContactdataProvider")]
+        public static IEnumerable<ContactData> ContactDataFromXmlFile()
+        {
+            return (List<ContactData>)
+                new XmlSerializer(typeof(List<ContactData>))
+                    .Deserialize(new StreamReader(@"contacts.xml"));
+
+        }
+
+        [Test, TestCaseSource(nameof(ContactDataFromXmlFile))]
         public void ContactsCreationTest(ContactData contact)
         {
             

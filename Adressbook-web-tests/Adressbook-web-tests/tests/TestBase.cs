@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Adressbook_web_tests;
+using OpenQA.Selenium.DevTools.V111.Emulation;
+using System.Diagnostics.Metrics;
 
 namespace Adressbook_web_tests
 {
@@ -33,11 +35,14 @@ namespace Adressbook_web_tests
         public static string GenerateRandomString(int max)
         {
 
-            int l = Convert.ToInt32(rnd.NextDouble() * max);
+            int l = Convert.ToInt32(Math.Floor(rnd.NextDouble() * max));
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < l; i++) 
             {
-                builder.Append(Convert.ToChar(32 + Convert.ToInt32(rnd.NextDouble() * 65)));
+                double flt = rnd.NextDouble();
+                int shift = Convert.ToInt32(Math.Floor(25 * flt));
+                char letter = Convert.ToChar(shift + 65);
+                builder.Append(letter);
             }
             return builder.ToString();
         }
