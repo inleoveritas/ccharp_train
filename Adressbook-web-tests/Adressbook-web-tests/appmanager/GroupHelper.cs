@@ -45,7 +45,25 @@ namespace Adressbook_web_tests
             return this;
         }
 
-
+        public GroupHelper Modify(GroupData? group, GroupData newData)
+        {
+            manager.Navigator.GoToTheGroupPage();
+            dynamic id = 0;
+            if (group is null)
+            {
+                CreateGroup(new GroupData("lev", "Group", "Test"));
+            }
+            else
+            {
+                id = group.Id;
+            }
+            SelectGroup(id);   
+            InitGroupModification();
+            FillGroupForm(newData);
+            SubmitGroupModification();
+            Return();
+            return this;
+        }
 
         public GroupHelper Remove(int p)
         {
@@ -59,7 +77,15 @@ namespace Adressbook_web_tests
             Return();
             return this;
         }
+        public GroupHelper Remove(GroupData group)
+        {
+            manager.Navigator.GoToTheGroupPage();
 
+            SelectGroup(group.Id);
+            DeleteGroup();
+            Return();
+            return this;
+        }
         public GroupHelper InitNewGroupCreation()
         {
             driver.FindElement(By.Name("new")).Click();
@@ -88,6 +114,11 @@ namespace Adressbook_web_tests
         public GroupHelper SelectGroup(int index)
         {
             driver.FindElement(By.XPath("//div[@id='content']/form/span[" + (index+1) + "]/input")).Click();
+            return this;
+        }
+        public GroupHelper SelectGroup(String id)
+        {
+            driver.FindElement(By.XPath("(//input[@name='selected[]' and @value='"+id+"'])")).Click();
             return this;
         }
 
@@ -134,5 +165,7 @@ namespace Adressbook_web_tests
             }
             return new List<GroupData>(groupCache);    
         }
+
+
     }
 }

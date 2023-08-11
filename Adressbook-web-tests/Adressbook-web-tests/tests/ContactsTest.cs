@@ -13,7 +13,7 @@ using OpenQA.Selenium.Support.UI;
 namespace Adressbook_web_tests
 {
     [TestFixture]
-    public class ContactsTests : TestBase
+    public class ContactsTests : ContactTestBase
     {
         public static IEnumerable<ContactData> RandomContactdataProvider()
         {
@@ -46,51 +46,81 @@ namespace Adressbook_web_tests
         public void ContactsCreationTest(ContactData contact)
         {
             
-            List<ContactData> oldContacts = app.Contact.GetContactList();
+            List<ContactData> oldContacts = ContactData.GetAllContacts();
 
             app.Contact.CreateContact(contact);
 
             oldContacts.Add(contact);
 
-            List<ContactData> newContacts = app.Contact.GetContactList();
+            List<ContactData> newContacts = ContactData.GetAllContacts();
             oldContacts.Sort();
             newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
 
+        }
+
+        [Test]
+        public void TestDBConnectivityForContacts()
+        {
+            DateTime start = DateTime.Now;
+            List<ContactData> fromUi = app.Contact.GetContactList();
+            DateTime end = DateTime.Now;
+            Console.Out.WriteLine(end.Subtract(start));
+
+            start = DateTime.Now;
+            List<ContactData> fromDb = ContactData.GetAllContacts();
+            end = DateTime.Now;
+            Console.Out.WriteLine(end.Subtract(start));
         }
 
         [Test]
         public void ContactsRemovalTest()
         {
-            List<ContactData> oldContacts = app.Contact.GetContactList();
+            List<ContactData> oldContacts = ContactData.GetAllContacts();
+            ContactData toBeRemoved = oldContacts[0];
 
-            app.Contact.RemoveContact(0);
+            app.Contact.RemoveContact(toBeRemoved);
 
-            oldContacts.RemoveAt(0);
 
-            List<ContactData> newContacts = app.Contact.GetContactList();
+       
+            oldContacts.Remove(toBeRemoved);
             oldContacts.Sort();
+            //Слишком быстро проходит у меня на машине, дожидаемся удаления из базы
+            Thread.Sleep(5000);
+            List<ContactData> newContacts = ContactData.GetAllContacts();
             newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
+
+            foreach (ContactData contact in newContacts)
+            {
+                Assert.AreNotEqual(contact.Id, toBeRemoved.Id);
+            }
         }
 
         [Test]
         public void ContactsModificationTest()
         {
-            List<ContactData> oldContacts = app.Contact.GetContactList();
+            List<ContactData> oldContacts = ContactData.GetAll();
 
             ContactData newData = new ContactData("Max", "Korolkov");
-            
-            app.Contact.ModifyContact(0, newData);
+            ContactData? toBeModified = oldContacts.Count > 0 ? oldContacts[0] : null;
 
-            oldContacts[0] = newData;
+            app.Contact.ModifyContact(toBeModified, newData);
 
-            List<ContactData> newContacts = app.Contact.GetContactList();
+            if (toBeModified is null)
+            {
+                oldContacts.Add(newData);
+            }
+            else
+            {
+                oldContacts[oldContacts.IndexOf(toBeModified)] = newData;
+            }
+            //Слишком быстро проходит у меня на машине, дожидаемся изменений в базе
+            Thread.Sleep(5000);
+            List<ContactData> newContacts = ContactData.GetAll();
             oldContacts.Sort();
             newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
-
-
         }
 
         [Test]  

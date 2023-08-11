@@ -10,7 +10,7 @@ using OpenQA.Selenium.Firefox;
 namespace Adressbook_web_tests
 {
     [TestFixture]
-    public class GroupTests : TestBase
+    public class GroupTests : GroupTestBase
     {
         public static IEnumerable<GroupData> RandomGroupdataProvider()
         {
@@ -40,13 +40,13 @@ namespace Adressbook_web_tests
         {
 
 
-            List<GroupData> oldGroups = app.Groups.GetGroupList();
+            List<GroupData> oldGroups = GroupData.GetAll();
 
             app.Groups.CreateGroup(group);
 
 
 
-            List<GroupData> newGroups = app.Groups.GetGroupList();
+            List<GroupData> newGroups = GroupData.GetAll();
             oldGroups.Add(group);
             oldGroups.Sort();
             newGroups.Sort();
@@ -55,18 +55,48 @@ namespace Adressbook_web_tests
         }
 
         [Test]
+        public void TestDBConnectivity()
+        {
+            DateTime start = DateTime.Now;
+            List<GroupData> fromUi = app.Groups.GetGroupList();
+            DateTime end = DateTime.Now;
+            Console.Out.WriteLine(end.Subtract(start));
+
+            start = DateTime.Now;
+            List<GroupData> fromDb = GroupData.GetAll();
+            end = DateTime.Now;
+            Console.Out.WriteLine(end.Subtract(start));
+        }
+
+
+        [Test]
+        public void TestDBConnectivity2()
+        {
+            foreach (ContactData contact in GroupData.GetAll()[0].GetContacts())
+            {
+                Console.Out.WriteLine(contact.Deprecated);
+            }
+        }
+
+        [Test]
         public void GroupRemovalTest()
         {
-            List<GroupData> oldGroups = app.Groups.GetGroupList();
+            List<GroupData> oldGroups = GroupData.GetAll();
+            GroupData toBeRemoved = oldGroups[0];
 
-            app.Groups.Remove(0);
-
-            List<GroupData> newGroups = app.Groups.GetGroupList();
+            app.Groups.Remove(toBeRemoved);
+           
+            List <GroupData> newGroups = GroupData.GetAll();
 
             oldGroups.RemoveAt(0);
             oldGroups.Sort();
             newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);
+
+            foreach (GroupData group in newGroups)
+            {
+                Assert.AreNotEqual(group.Id, toBeRemoved.Id);
+            }
 
         }
 
@@ -74,19 +104,28 @@ namespace Adressbook_web_tests
         public void GroupModificationTest()
         {
 
-            List<GroupData> oldGroups = app.Groups.GetGroupList();
+            List<GroupData> oldGroups = GroupData.GetAll();
+           
 
             GroupData newData = new GroupData("aaa");
             newData.Header = "";
             newData.Footer = "";
 
-            app.Groups.Modify(0, newData);
+            GroupData? toBeModified = oldGroups.Count > 0 ? oldGroups[0] : null;
 
-            oldGroups[0] = newData;
+            app.Groups.Modify(toBeModified, newData);
 
-
-            List<GroupData> newGroups = app.Groups.GetGroupList();
-            oldGroups[0].Name = newData.Name;
+            if (toBeModified is null)
+            {
+                oldGroups.Add(newData);
+            }
+            else
+            {
+                oldGroups[oldGroups.IndexOf(toBeModified)] = newData;
+            }
+            Thread.Sleep(5000);
+            List<GroupData> newGroups = GroupData.GetAll();
+            //oldGroups[0].Name = newData.Name;
             oldGroups.Sort();
             newGroups.Sort();
             Assert.AreEqual(oldGroups, newGroups);

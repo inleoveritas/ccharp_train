@@ -1,5 +1,6 @@
 ﻿using Adressbook_web_tests;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,11 @@ namespace Adressbook_web_tests
             driver.FindElements(By.XPath("//tr[@name='entry']"))[index].FindElement(By.XPath("//input[@type='checkbox']")).Click();
             return this;
         }
+        public ContactHelper SelectContact(String id)
+        {
+            driver.FindElement(By.XPath("(//input[@name='selected[]' and @value='"+id+"'])")).Click();
+            return this;
+        }
 
         public bool ContactExists(int index)
         {
@@ -64,6 +70,18 @@ namespace Adressbook_web_tests
                 return true;
             }
             return false;
+        }
+        public bool ContactExists(String id)
+        {
+            try
+            {
+                driver.FindElement(By.XPath("(//input[@name='selected[]' and @value='" + id + "'])"));
+                return true;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
         }
         public ContactHelper DeleteContact()
         {
@@ -84,6 +102,14 @@ namespace Adressbook_web_tests
                 CreateContact(new ContactData("Lev", "Myasnikov"));
             }
             SelectContact(index)
+            .DeleteContact()
+            .AcceptAlert();
+            return this;
+        }
+
+        public ContactHelper RemoveContact(ContactData contact)
+        {
+            SelectContact(contact.Id)
             .DeleteContact()
             .AcceptAlert();
             return this;
@@ -129,6 +155,25 @@ namespace Adressbook_web_tests
             SelectContact(index)
             .InitContactModification()
             .FillContactForm(contact)
+            .SubmitContactModification();
+            manager.Navigator.GoToHomePage();
+            return this;
+        }
+
+        public ContactHelper ModifyContact(ContactData? contact, ContactData newcontact)
+        {
+            dynamic id = 0;
+            if (contact is null)
+            {
+                CreateContact(new ContactData("Lev", "Myasnikov"));
+            }
+            else
+            {
+               id = contact.Id;
+            }
+            SelectContact(0)
+            .InitContactModification()
+            .FillContactForm(newcontact)
             .SubmitContactModification();
             manager.Navigator.GoToHomePage();
             return this;
@@ -216,5 +261,53 @@ namespace Adressbook_web_tests
 
             return driver.FindElement(By.Id("content")).GetAttribute("innerText").TrimEnd('\r', '\n').Replace("\r", "");
         }
+
+        public void AddContactToGroup(ContactData contact, GroupData group)
+        {
+            manager.Navigator.GoToHomePage();
+            ClearGroupFiltet();
+            SelectContact(contact.Id);
+            SelectGroupToAdd(group.Name);
+            CommitAddingContactToGroup();
+            new WebDriverWait(driver, TimeSpan.FromSeconds(10))
+                .Until(d => d.FindElements(By.CssSelector("div.msgbox")).Count > 0);
+        }
+
+        public void CommitAddingContactToGroup()
+        {
+            driver.FindElement(By.Name("add")).Click();
+        }
+
+        public void SelectGroupToAdd(string name)
+        {
+            new SelectElement(driver.FindElement(By.Name("to_group"))).SelectByText(name);
+        }
+
+        public void ClearGroupFiltet()
+        {
+            driver.FindElement(By.Name("group")).Click();
+            driver.FindElement(By.XPath("//option[@value='']")).Click();
+        }
+
+        public void RemoveContactFromGroup(ContactData contact, GroupData group)
+        {
+            manager.Navigator.GoToTheGroupContactsPage(group.Id);
+            SelectContactInGroup(contact.Id);
+            RemoveContactInGroup();
+            new WebDriverWait(driver, TimeSpan.FromSeconds(10))
+                .Until(d => d.FindElements(By.CssSelector("div.msgbox")).Count > 0);
+        }
+
+        private void RemoveContactInGroup()
+        {
+            driver.FindElement(By.Name("remove")).Click();
+        }
+
+        private void SelectContactInGroup(string contactId)
+        {
+            driver.FindElement(By.Id(contactId)).Click();
+        }
+
+
     }
 }
