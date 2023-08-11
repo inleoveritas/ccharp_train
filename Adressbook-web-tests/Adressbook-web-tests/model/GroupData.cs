@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Bogus.DataSets;
+using DocumentFormat.OpenXml.Wordprocessing;
+using LinqToDB.Mapping;
+using Nest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace Adressbook_web_tests
 {
+    [Table(Name = "group_list")]
     public class GroupData : IEquatable<GroupData>, IComparable<GroupData>  
     {
         private string name;
         private string header = "";
         private string footer = "";
-
         public GroupData()
         {
         }
         public GroupData(string name) 
         { 
-            this.name = name; 
+            Name = name; 
         }
 
         public bool Equals(GroupData other) 
@@ -52,48 +56,41 @@ namespace Adressbook_web_tests
             }
             return Name.CompareTo(other.Name);
         }
-    
+
         public GroupData(string name, string header, string footer)
         {
-            this.name = name;   
+            this.name = name;
             this.header = header;
             this.footer = footer;
         }
 
-        public string Name 
-        { 
-            get 
-            { 
-                return name; 
-            }
-            set 
-            { 
-                name = value; 
-            }
-            
-        }
-        public string Header
-        { 
-            get
+        [Column(Name = "group_name")]
+        public string Name { get; set; }
 
-            { 
-                return header; 
-            }
-            set
-            {
-                header = value; 
-            }
-        }
-        public string Footer
+        [Column(Name = "group_header")]
+        public string Header { get; set; }
+        
+        [Column(Name = "group_footer")]
+        public string Footer { get; set; }
+
+        [Column(Name = "group_id"), PrimaryKey, Identity]
+        public string Id { get; set; }
+
+        public static List<GroupData> GetAll() 
         {
-            get
-
+            using (AddressBookDB db = new AddressBookDB())
             {
-                return footer;
+                return (from g in db.Groups select g).ToList();
             }
-            set
+        }
+
+        public List<ContactData> GetContacts()
+        {
+            using (AddressBookDB db = new AddressBookDB())
             {
-                footer = value;
+                return (from c in db.Contacts 
+                        from gcr in db.GCR.Where(p => p.GroupId == Id && p.ContactId == c.Id && c.Deprecated == "0000 - 00 - 00 00:00:00")
+                       select c).Distinct().ToList();
             }
         }
     }
