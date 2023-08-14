@@ -63,5 +63,6 @@ namespace addressbook_tests_autoit
             CloseGroupsDialogue();
             return list;
         }
+
     }
 }
