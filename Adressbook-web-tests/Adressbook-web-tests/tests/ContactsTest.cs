@@ -102,7 +102,7 @@ namespace Adressbook_web_tests
         {
             List<ContactData> oldContacts = ContactData.GetAll();
 
-            ContactData newData = new ContactData("Max", "Korolkov");
+            ContactData newData = new ContactData("Pavel", "lushnikov");
             ContactData? toBeModified = oldContacts.Count > 0 ? oldContacts[0] : null;
 
             app.Contact.ModifyContact(toBeModified, newData);

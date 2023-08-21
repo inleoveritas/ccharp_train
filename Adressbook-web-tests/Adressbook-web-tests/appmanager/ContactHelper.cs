@@ -165,13 +165,17 @@ namespace Adressbook_web_tests
             dynamic id = 0;
             if (contact is null)
             {
-                CreateContact(new ContactData("Lev", "Myasnikov"));
+                contact = new ContactData("Lev", "Myasnikov");
+                CreateContact(contact);
+                Thread.Sleep(5000); 
+                List<ContactData> updatedContacts = ContactData.GetAll();
+                id = updatedContacts[updatedContacts.IndexOf(contact)].Id;
             }
             else
             {
                id = contact.Id;
             }
-            SelectContact(0)
+            SelectContact(id)
             .InitContactModification()
             .FillContactForm(newcontact)
             .SubmitContactModification();
