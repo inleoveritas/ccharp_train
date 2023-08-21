@@ -64,5 +64,15 @@ namespace addressbook_tests_autoit
             return list;
         }
 
+        internal void Remove(GroupData newGroup)
+        {
+            OpenGroupsDialogue();        
+            aux.ControlClick(GROUPWINTITLE, "", "WindowsForms10.BUTTON.app.0.2c908d53");
+            aux.WinWait("Delete group");
+            aux.ControlTreeView("Delete group", "", "WindowsForms10.SysTreeView32.app.0.2c908d51", "Select", "#0|#1", "");
+            aux.ControlClick("Delete group", "", "WindowsForms10.BUTTON.app.0.2c908d51");
+            aux.ControlClick("Delete group", "", "WindowsForms10.BUTTON.app.0.2c908d53");
+            CloseGroupsDialogue();
+        }
     }
 }
