@@ -37,6 +37,24 @@ namespace Adressbook_web_tests
             return Name == other.Name;
         }
 
+        public bool Equals(object other)
+        {
+            if (Object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            if (!(other is GroupData))
+                throw new ArgumentException("obj is not GroupData");
+            var data = other as GroupData;
+            if (data == null)
+                return false;
+            return this.Name == data.Name;
+        }
+
         public override int GetHashCode() 
         {
             return Name.GetHashCode();

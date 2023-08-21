@@ -269,6 +269,7 @@ namespace Adressbook_web_tests
         public void AddContactToGroup(ContactData contact, GroupData group)
         {
             manager.Navigator.GoToHomePage();
+
             ClearGroupFiltet();
             SelectContact(contact.Id);
             SelectGroupToAdd(group.Name);

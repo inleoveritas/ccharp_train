@@ -119,8 +119,38 @@ namespace Adressbook_web_tests
                 return true;
             }
             return Firstname == other.Firstname && Lastname == other.Lastname;
-
         }
+
+        public override bool Equals(object other)
+        {
+            if (Object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            if (!(other is ContactData))
+                throw new ArgumentException("obj is not ContactData");
+            var data = other as ContactData;
+            if (data == null)
+                return false;
+            return Firstname == data.Firstname && Lastname == data.Lastname;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + Firstname.GetHashCode();
+                hash = hash * 23 + Lastname.GetHashCode();
+                return hash;
+            }
+        }
+
         private bool hasPhone()
         {
             return !(String.IsNullOrWhiteSpace(HomePhone) && String.IsNullOrWhiteSpace(MobilePhone) && String.IsNullOrWhiteSpace(WorkPhone));
